@@ -56,6 +56,10 @@ public class Usuario extends BaseEntity {
 	private String login;
 
 	@NotEmpty 
+	@Column(name="email", length=80, nullable=false)
+	private String email;
+
+	@NotEmpty 
 	@Column(name="senha", length=50, nullable=false)
 	private String senha;
 
@@ -129,6 +133,11 @@ public class Usuario extends BaseEntity {
 	public void setPerfis(String perfis) {
 		this.perfis = perfis;
 	}
-	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 }
 
