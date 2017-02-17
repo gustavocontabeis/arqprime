@@ -1,4 +1,4 @@
-package br.com.maxig.model.utils;
+package br.com.coder.arqprime.model.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

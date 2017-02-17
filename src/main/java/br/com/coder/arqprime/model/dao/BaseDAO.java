@@ -33,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.coder.arqprime.model.entity.BaseEntity;
-import br.com.maxig.model.utils.Filtro;
-import br.com.maxig.model.utils.HibernateUtil;
+import br.com.coder.arqprime.model.utils.Filtro;
+import br.com.coder.arqprime.model.utils.HibernateUtil;
 
 public class BaseDAO<T extends BaseEntity> implements Serializable {
 

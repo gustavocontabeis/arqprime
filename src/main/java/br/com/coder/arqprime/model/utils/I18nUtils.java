@@ -1,4 +1,4 @@
-package br.com.maxig.model.utils;
+package br.com.coder.arqprime.model.utils;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
