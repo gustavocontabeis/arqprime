@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.com.coder.arqprime.model.entity.usuarios.Usuario;
+import br.com.coder.arqprime.model.entity.app.usuarios.Usuario;
 
 
 

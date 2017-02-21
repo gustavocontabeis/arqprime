@@ -1,4 +1,4 @@
-package br.com.coder.arqprime.model.entity.usuarios;
+package br.com.coder.arqprime.model.entity.app.usuarios;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

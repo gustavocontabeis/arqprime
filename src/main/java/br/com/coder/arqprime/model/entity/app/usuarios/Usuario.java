@@ -1,4 +1,4 @@
-package br.com.coder.arqprime.model.entity.usuarios;
+package br.com.coder.arqprime.model.entity.app.usuarios;
 
 import java.util.Date;
 
@@ -34,7 +34,12 @@ import br.com.coder.arqprime.model.entity.BaseEntity;
 				@NamedQuery(name="Usuario.getUsuarioComPerfisPorLogin", query=
 					"select obj "
 					+ "from Usuario obj "
-					+ "where obj.login=:login")
+					+ "where obj.login=:login"),
+				@NamedQuery(name="Usuario-porEmail", query=
+				"select obj "
+				+ "from Usuario obj "
+				+ "where obj.email=:email"),
+				
 			}
 		)
 public class Usuario extends BaseEntity {
