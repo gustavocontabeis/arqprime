@@ -42,7 +42,7 @@ public class SegurancaFilter implements Filter {
     	properties = new Properties();
 		try {
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			properties.load(classLoader.getResourceAsStream("seguranca.properties"));
+			properties.load(classLoader.getResourceAsStream("config.properties"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Arquivo de configuração da segurança não localizado no classpath.");
