@@ -24,8 +24,10 @@ import br.com.coder.arqprime.model.entity.BaseEntity;
 @XmlRootElement
 @Entity @Table(name="usuario")
 		@NamedQueries(value={
-				@NamedQuery(name="Usuario-list", query="select obj from Usuario obj "),
-				@NamedQuery(name="Usuario-porId", query="select obj from Usuario obj where obj.id=:id"),
+				@NamedQuery(name="Usuario-list", query=
+					"select obj from Usuario obj "),
+				@NamedQuery(name="Usuario-porId", query=
+					"select obj from Usuario obj where obj.id=:id"),
 				@NamedQuery(name="todosUsuario", query="from Usuario"),
 				@NamedQuery(name="Usuario.getUsuarioComPerfis", query=
 					"select obj "
@@ -36,9 +38,9 @@ import br.com.coder.arqprime.model.entity.BaseEntity;
 					+ "from Usuario obj "
 					+ "where obj.login=:login"),
 				@NamedQuery(name="Usuario-porEmail", query=
-				"select obj "
-				+ "from Usuario obj "
-				+ "where obj.email=:email"),
+					"select obj "
+					+ "from Usuario obj "
+					+ "where obj.email=:email"),
 				
 			}
 		)
