@@ -1,4 +1,4 @@
-package br.com.coder.arqprime.model.dao;
+package br.com.coder.arqprime.model.dao.app;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;

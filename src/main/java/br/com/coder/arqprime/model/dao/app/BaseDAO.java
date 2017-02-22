@@ -1,4 +1,4 @@
-package br.com.coder.arqprime.model.dao;
+package br.com.coder.arqprime.model.dao.app;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
