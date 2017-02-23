@@ -1,4 +1,4 @@
-package br.com.coder.arqprime.web.jsf.managedbeans.app;
+package br.com.coder.arqprime.web.jsf.managedbeans.app.usuarios;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -31,6 +31,7 @@ import br.com.coder.arqprime.model.entity.BaseEntity;
 import br.com.coder.arqprime.model.entity.app.usuarios.PerfilAcesso;
 import br.com.coder.arqprime.model.entity.app.usuarios.Usuario;
 import br.com.coder.arqprime.model.utils.GenerateMD5;
+import br.com.coder.arqprime.web.jsf.managedbeans.app.CrudManagedBean;
 
 @Named @ViewScoped
 public class UsuarioManagedBean extends CrudManagedBean<Usuario, UsuarioDAO> {
