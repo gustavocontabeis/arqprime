@@ -59,11 +59,11 @@ public class Usuario extends BaseEntity {
 	private Date dtInativo;
 
 	@NotEmpty 
-	@Column(name="login", length=50, nullable=false)
+	@Column(name="login", length=50, nullable=false, unique=true)
 	private String login;
 
 	@NotEmpty 
-	@Column(name="email", length=80, nullable=false)
+	@Column(name="email", length=80, nullable=false, unique=true)
 	private String email;
 
 	@NotEmpty 
