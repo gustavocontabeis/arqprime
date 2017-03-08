@@ -147,4 +147,3 @@ public class Usuario extends BaseEntity {
 		this.email = email;
 	}
 }
-
