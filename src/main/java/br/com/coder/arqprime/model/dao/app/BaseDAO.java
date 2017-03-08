@@ -72,6 +72,7 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
     		transaction.commit();
 		} catch (Exception e) {
 			transaction.rollback();
+			e.printStackTrace();
 		} finally {
 			session.close();
 		}
