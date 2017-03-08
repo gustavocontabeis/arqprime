@@ -45,7 +45,8 @@ public class LoginManagedBean implements Serializable {
 	private void init() throws FileNotFoundException, IOException{
 		properties = new Properties();
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		properties.load(classLoader.getResourceAsStream("config.properties"));	}
+		properties.load(classLoader.getResourceAsStream("config.properties"));	
+	}
 	
 	public void login(ActionEvent event) throws IOException, DaoException {
 

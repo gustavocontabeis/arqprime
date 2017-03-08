@@ -1,10 +1,13 @@
 package br.com.coder.arqprime.model.dao.app;
 
+import javax.inject.Named;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import br.com.coder.arqprime.model.entity.app.Configuracao;
 
+@Named
 public class ConfiguracaoDAO extends BaseDAO<Configuracao> {
 	
  	private static final long serialVersionUID = 1L;

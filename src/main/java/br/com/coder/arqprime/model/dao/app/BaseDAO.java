@@ -67,11 +67,15 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
         validate(obj);
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
-        session.delete(obj);
-        transaction.commit();
+        try {
+    		session.delete(obj);
+    		transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+		} finally {
+			session.close();
+		}
         obj.setId(null);
-        //session.flush();
-        session.close();
     }
 
     @SuppressWarnings({"unchecked", "hiding"})
