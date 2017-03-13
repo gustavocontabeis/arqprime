@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import br.com.coder.arqprime.model.entity.BaseEntity;
 import br.com.coder.arqprime.model.utils.Filtro;
 import br.com.coder.arqprime.model.utils.HibernateUtil;
+import br.com.coder.arqprime.model.utils.StringUtil;
 
 public class BaseDAO<T extends BaseEntity> implements Serializable {
 
@@ -184,14 +185,14 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 //            dto.criteria.setFetchMode(property, FetchMode.JOIN);
 //        }
 
-        if (filtro.getPropriedadeOrdenacao() != null) {
-        	LOGGER.debug("Ordenação: ascendente? {} por? {}", filtro.isAscendente(), filtro.getPropriedadeOrdenacao());
-        	if(filtro.isAscendente()){
-        		dto.criteriaQueryClass.orderBy(dto.builder.asc(dto.from.get(filtro.getPropriedadeOrdenacao())));
-        	}else{
-        		dto.criteriaQueryClass.orderBy(dto.builder.desc(dto.from.get(filtro.getPropriedadeOrdenacao())));
-        	}
-        }
+//        if (filtro.getPropriedadeOrdenacao() != null) {
+//        	LOGGER.debug("Ordenação: ascendente? {} por? {}", filtro.isAscendente(), filtro.getPropriedadeOrdenacao());
+//        	if(filtro.isAscendente()){
+//        		dto.criteriaQueryClass.orderBy(dto.builder.asc(dto.from.get(filtro.getPropriedadeOrdenacao())));
+//        	}else{
+//        		dto.criteriaQueryClass.orderBy(dto.builder.desc(dto.from.get(filtro.getPropriedadeOrdenacao())));
+//        	}
+//        }
 
         List list = createQuery.getResultList();
     	LOGGER.debug("Retornado {} registros.", list.size());
@@ -310,6 +311,25 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 			CriteriaQuery select = criteriaQueryClasse.select(from);
 			select.where(where.toArray(new Predicate[where.size()]));
 		}
+		
+		if(!StringUtil.isBlank(filtro.getPropriedadeOrdenacao())){
+			//List<Order> orderList = new ArrayList();
+			if(filtro.isAscendente()){
+				List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
+				orderList.add(builder.asc(from.get(filtro.getPropriedadeOrdenacao())));
+				criteriaQueryClasse.orderBy(orderList);
+				//builder.asc(from.get(filtro.getPropriedadeOrdenacao()));
+			}else{
+				List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
+				orderList.add(builder.desc(from.get(filtro.getPropriedadeOrdenacao())));
+				criteriaQueryClasse.orderBy(orderList);
+				//builder.desc(from.get(filtro.getPropriedadeOrdenacao()));
+			}
+			
+			
+			
+		}
+		
 //		//count
 //		CriteriaQuery<Long> cq = builder.createQuery(Long.class);
 //		cq.select(builder.count(cq.from(filtro.getClasse())));
