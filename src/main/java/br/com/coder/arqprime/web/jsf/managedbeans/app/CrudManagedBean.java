@@ -27,6 +27,7 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 	
 	protected T entity;
 	protected LazyDataModel<T> model;
+	protected List<T>list;
 	protected Filtro<T> filtro;
 	
 	protected BaseDAO<T> dao;
@@ -65,10 +66,25 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 					entity = novo();
 					CrudManagedBean.this.entity = entity;
 				}
+				if(getFilters() != null){
+					filters = getFilters();
+				}
 				filtro = new Filtro<T>(CrudManagedBean.this.entity.getClass(), first, pageSize, sortField, sortOrder, filters);
 				dao = getDao();
-				setRowCount(dao.getQuantidade2(filtro));
-				return dao.buscar2(filtro);
+				
+				
+				Integer quantidade2 = getQuantidade2();
+				if(quantidade2 == null){
+					quantidade2 = dao.getQuantidade2(filtro);
+				}
+				setRowCount(quantidade2);
+				
+				List<T> buscar2 = buscar2();
+				if(buscar2 == null){
+					buscar2 = dao.buscar2(filtro);
+				}
+				list = buscar2;
+				return buscar2;
 			}
 
 			public T getRowData(String rowKey) {
@@ -116,6 +132,18 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 		message(null, "Registro salvo com sucesso.");
 	}
 	
+	protected Integer getQuantidade2() {
+		return null;
+	}
+
+	protected List<T> buscar2() {
+		return null;
+	}
+
+	protected Map<String, Object> getFilters() {
+		return null;
+	}
+
 	public void excluir(ActionEvent evt) throws DaoException {
 		try {
 			if(excluirAntes(entity)){
@@ -191,6 +219,10 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public List<T> getList() {
+		return list;
 	}
 
 }

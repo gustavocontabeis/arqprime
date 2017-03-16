@@ -112,6 +112,17 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		}
         return null;
     }
+    
+    public List buscar(String hql, Object...params) throws DaoException {
+		Session session = getSession();
+		Query query = session.createQuery(hql);
+    	for (int i = 0; i < params.length; i++) {
+    		query.setParameter(i, params[i]);
+		}
+		List list = query.list();
+		session.close();
+		return list;
+    }
 
     private void validate(Serializable obj) throws DaoException {
     	
@@ -269,9 +280,11 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 			
 			Set<String> keySet = map.keySet();
 			for (String key : keySet) {
-				LOGGER.debug("KEY: {} ", key);
 				Object value = map.get(key);
-
+				LOGGER.debug("KEY: {} VALUE: {}", key, value);
+				
+				//filtro.getClass().getField(key)
+				
 //				Montar aqui algo que crie um map com joins
 //				Join join = null;
 //				if(joins.containsKey(key)){
