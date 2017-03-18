@@ -12,11 +12,14 @@ import javax.faces.event.ComponentSystemEvent;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.coder.arqprime.model.dao.app.BaseDAO;
 import br.com.coder.arqprime.model.dao.app.DaoException;
 import br.com.coder.arqprime.model.entity.BaseEntity;
 import br.com.coder.arqprime.model.utils.Filtro;
+import br.com.coder.arqprime.web.jsf.filters.SegurancaFilter;
 
 public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T>> extends BaseManagedBean {
 
@@ -24,6 +27,8 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	protected static final Logger LOGGER = LoggerFactory.getLogger(CrudManagedBean.class.getSimpleName());
 	
 	protected T entity;
 	protected LazyDataModel<T> model;
