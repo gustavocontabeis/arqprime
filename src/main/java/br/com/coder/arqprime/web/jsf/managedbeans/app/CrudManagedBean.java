@@ -71,9 +71,7 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 					entity = novo();
 					CrudManagedBean.this.entity = entity;
 				}
-				if(getFilters() != null){
-					filters = getFilters();
-				}
+				filters = getFilters(filters);
 				filtro = new Filtro<T>(CrudManagedBean.this.entity.getClass(), first, pageSize, sortField, sortOrder, filters);
 				dao = getDao();
 				
@@ -145,8 +143,8 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 		return null;
 	}
 
-	protected Map<String, Object> getFilters() {
-		return null;
+	protected Map<String, Object> getFilters(Map<String, Object> filters) {
+		return filters;
 	}
 
 	public void excluir(ActionEvent evt) throws DaoException {
