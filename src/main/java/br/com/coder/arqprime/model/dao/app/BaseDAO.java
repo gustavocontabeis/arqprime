@@ -326,21 +326,30 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		}
 		
 		if(!StringUtil.isBlank(filtro.getPropriedadeOrdenacao())){
-			//List<Order> orderList = new ArrayList();
-			if(filtro.isAscendente()){
-				List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
-				orderList.add(builder.asc(from.get(filtro.getPropriedadeOrdenacao())));
-				criteriaQueryClasse.orderBy(orderList);
-				//builder.asc(from.get(filtro.getPropriedadeOrdenacao()));
+			List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
+			if(filtro.getPropriedadeOrdenacao().contains(",")){
+				String[] split = filtro.getPropriedadeOrdenacao().split(",");
+				for (String string : split) {
+					String[] split2 = string.trim().split(" ");
+					String property = split2[0].trim();
+					if(split2.length==2){
+						if("desc".equals(split2[1].trim().toLowerCase())){
+							orderList.add(builder.desc(from.get(property)));
+						}else{
+							orderList.add(builder.asc(from.get(property)));
+						}
+					}else{
+						orderList.add(builder.asc(from.get(property)));
+					}
+				}
 			}else{
-				List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
-				orderList.add(builder.desc(from.get(filtro.getPropriedadeOrdenacao())));
-				criteriaQueryClasse.orderBy(orderList);
-				//builder.desc(from.get(filtro.getPropriedadeOrdenacao()));
+				if(filtro.isAscendente()){
+					orderList.add(builder.asc(from.get(filtro.getPropriedadeOrdenacao())));
+				}else{
+					orderList.add(builder.desc(from.get(filtro.getPropriedadeOrdenacao())));
+				}
 			}
-			
-			
-			
+			criteriaQueryClasse.orderBy(orderList);
 		}
 		
 //		//count

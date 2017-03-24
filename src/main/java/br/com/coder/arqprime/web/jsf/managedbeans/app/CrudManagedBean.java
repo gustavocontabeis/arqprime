@@ -72,6 +72,7 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 					CrudManagedBean.this.entity = entity;
 				}
 				filters = getFilters(filters);
+				sortField = getSortField(sortField);
 				filtro = new Filtro<T>(CrudManagedBean.this.entity.getClass(), first, pageSize, sortField, sortOrder, filters);
 				dao = getDao();
 				
@@ -143,6 +144,10 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 		return null;
 	}
 
+	protected String getSortField(String sortField) {
+		return sortField;
+	}
+
 	protected Map<String, Object> getFilters(Map<String, Object> filters) {
 		return filters;
 	}
@@ -159,11 +164,11 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 		}
 	}
 
-	private boolean excluirAntes(T entity) {
+	protected boolean excluirAntes(T entity) {
 		return true;
 	}
 	
-	private void excluirApos(T entity) {
+	protected void excluirApos(T entity) {
 		message(null, "Registro excluído com sucesso.");
 	}
 	
