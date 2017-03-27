@@ -7,6 +7,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 import br.com.coder.arqprime.model.utils.I18nUtils;
 
@@ -51,6 +52,11 @@ public class BaseManagedBean implements Serializable {
 	@PostConstruct
 	private void init() {
 		System.out.println("BaseManagedBean.init() ");
+	}
+	
+	protected HttpSession getSession(){
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+		return session;
 	}
 	
 }

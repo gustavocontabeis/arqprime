@@ -47,6 +47,7 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 	}
 	
 	public void listener(ComponentSystemEvent evt) throws AbortProcessingException{
+		aoEntrarAntes();
 		if(id != null){
 			try {
 				entity = getDao().buscar(new Long(id));
@@ -58,8 +59,17 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 				message(e);
 			}
 		}
+		aoEntrarApos();
 	}
 	
+	protected void aoEntrarApos() {
+		
+	}
+
+	protected void aoEntrarAntes() {
+		
+	}
+
 	protected void loadLazyModel() {
 		model = new LazyDataModel<T>() {
 			private static final long serialVersionUID = 1L;
