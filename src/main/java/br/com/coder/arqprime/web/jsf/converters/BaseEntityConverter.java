@@ -37,7 +37,7 @@ public class BaseEntityConverter implements Converter {
 
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
-		log.info(String.format("%s - %s - %s\n", "getAsObject", component.getClientId(), value));
+		log.fine(String.format("%s - %s - %s\n", "getAsObject", component.getClientId(), value));
 		if (StringUtils.isBlank(value) || "null".equals(value)) 
 			return null;
 		Object object = component.getAttributes().get("tipo");
@@ -88,7 +88,7 @@ public class BaseEntityConverter implements Converter {
 	public String getAsString(FacesContext context, UIComponent component, Object obj) {
 		if (obj != null && obj instanceof BaseEntity) {
 			BaseEntity entity = (BaseEntity) obj;
-			log.info(String.format("%s - %s - %s - %s - %s\n", "baseEntityConverter", "getAsString1", component.getClientId(), String.valueOf(obj), String.valueOf(entity.getId())));
+			log.fine(String.format("%s - %s - %s - %s - %s\n", "baseEntityConverter", "getAsString1", component.getClientId(), String.valueOf(obj), String.valueOf(entity.getId())));
 			return String.valueOf(entity.getId());
 		}
 		return obj!=null?String.valueOf(obj):"";
