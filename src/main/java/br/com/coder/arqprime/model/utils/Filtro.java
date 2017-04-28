@@ -17,7 +17,8 @@ public class Filtro<T extends Serializable> implements Serializable {
 	private boolean ascendente = true;
 	private String propriedadeOrdenacao;
 	private Map<String, Object> filters = new HashMap<>();
-	private List<String> fetchs = new ArrayList<String>();
+	private List<String> fetchs = new ArrayList<>();
+	private List<String> joins = new ArrayList<>();
 	
 	public Filtro() {
 		super();
@@ -95,6 +96,14 @@ public class Filtro<T extends Serializable> implements Serializable {
 		for (String property : properties) {
 			getFetchs().add(property);
 		}
+	}
+
+	public List<String> getJoins() {
+		return joins;
+	}
+
+	public void setJoins(List<String> joins) {
+		this.joins = joins;
 	}
 		
 }

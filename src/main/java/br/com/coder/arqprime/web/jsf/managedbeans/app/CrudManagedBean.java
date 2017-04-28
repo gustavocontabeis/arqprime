@@ -81,9 +81,10 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 					entity = novo();
 					CrudManagedBean.this.entity = entity;
 				}
-				filters = getFilters(filters);
-				sortField = getSortField(sortField);
+				
 				filtro = new Filtro<T>(CrudManagedBean.this.entity.getClass(), first, pageSize, sortField, sortOrder, filters);
+				filtro = getFiltro(filtro);
+				
 				dao = getDao();
 				
 				
@@ -154,14 +155,10 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 		return null;
 	}
 
-	protected String getSortField(String sortField) {
-		return sortField;
+	protected Filtro getFiltro(Filtro filtro) {
+		return filtro;
 	}
-
-	protected Map<String, Object> getFilters(Map<String, Object> filters) {
-		return filters;
-	}
-
+	
 	public void excluir(ActionEvent evt) throws DaoException {
 		try {
 			if(excluirAntes(entity)){

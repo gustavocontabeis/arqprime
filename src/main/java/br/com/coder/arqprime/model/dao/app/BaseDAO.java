@@ -5,12 +5,15 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolation;
@@ -29,6 +32,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.hibernate.stat.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +92,7 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
         //session.flush();
         transaction.commit();
         session.close();
+        printStats("Buscar T id");
         return load;
     }
 
@@ -110,6 +115,7 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
         	transaction.commit();
         	session.close();
 		}
+        printStats("Buscar id");
         return null;
     }
     
@@ -213,9 +219,21 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 	    	}
     	}
     	
+    	printStats("Buscar 2");
+    	
         dto.session.close();
         return list;
     }
+    
+	private static void printStats(String msg) {
+    	Statistics statistics = HibernateUtil.getStatistics();
+		System.out.println("*****  ***** " +msg);
+		System.out.println("Fetch Count=" + statistics.getEntityFetchCount());
+		System.out.println("Cache Hit Count=" + statistics.getSecondLevelCacheHitCount());
+		System.out.println("Cache Miss Count=" + statistics.getSecondLevelCacheMissCount());
+		System.out.println("Cache Put Count=" + statistics.getSecondLevelCachePutCount());
+		System.out.println();
+	}
 
     @Deprecated
     public int getQuantidade(Filtro filtro) {
@@ -275,8 +293,55 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		LOGGER.debug("Criando criteria da classe {}.", filtro.getClasse().getSimpleName());
 		List<Predicate> where = new ArrayList<Predicate>();
 		if(filtro.getFilters()!=null){
-			Map<String, Object> map = filtro.getFilters();
+			Map<String, String> map = filtro.getFilters();
+			//Set<String> paths = new HashSet<>();
 			Map<String, Object> joins = new HashMap<>();
+			
+//			if(filtro.getClasse().getSimpleName().equals("Conta")){
+//				paths.add("planoContas");
+//				paths.add("pai.planoContas");
+//				
+//				//from.fetch("planoContas");
+//				//from.fetch("pai.planoContas");
+//			}
+			
+			for(Object path : filtro.getJoins()){
+				String[] split = path.toString().split("\\.");
+				Join join = null;
+				for (String string : split) {
+					if(join == null){
+						join = from.join(string);
+					}else{
+						join = join.join(string); 
+					}
+				}
+			}
+			
+			for(Object path : filtro.getFetchs()){
+				String[] split = path.toString().split("\\.");
+				Fetch join = null;
+				for (String string : split) {
+					if(join == null){
+						join = from.fetch(string);
+					}else{
+						join = join.fetch(string); 
+					}
+				}
+			}
+			
+			//Montar aqui algo que crie um map com joins
+//			Join join = null;
+//			if(joins.containsKey(key)){
+//				join = (Join) joins.get(key);
+//			}else{
+//				join = from.join(key);
+//				joins.put(key, join);
+//			}
+//			if(value == null){
+//				continue;
+//			}
+
+			
 			
 			Set<String> keySet = map.keySet();
 			for (String key : keySet) {
@@ -284,18 +349,6 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 				LOGGER.debug("KEY: {} VALUE: {}", key, value);
 				
 				//filtro.getClass().getField(key)
-				
-//				Montar aqui algo que crie um map com joins
-//				Join join = null;
-//				if(joins.containsKey(key)){
-//					join = (Join) joins.get(key);
-//				}else{
-//					join = from.join(key);
-//					joins.put(key, join);
-//				}
-//				if(value == null){
-//					continue;
-//				}
 				
 				if(value instanceof String){
 					String strValue = (String) value;
