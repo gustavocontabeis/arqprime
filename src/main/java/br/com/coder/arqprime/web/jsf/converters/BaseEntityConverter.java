@@ -68,7 +68,7 @@ public class BaseEntityConverter implements Converter {
 					dao = (BaseDAO<BaseEntity>) Class.forName("br.com.maxig.model.dao."+newInstance.getClass().getSimpleName()+"DAO").newInstance();
 				}
 				try {
-					abstractBaseEntity = dao.buscar(abstractBaseEntity, abstractBaseEntity.getId());
+					abstractBaseEntity = dao.buscar(abstractBaseEntity.getId());
 				} catch (DaoException e) {
 					e.printStackTrace();
 				}

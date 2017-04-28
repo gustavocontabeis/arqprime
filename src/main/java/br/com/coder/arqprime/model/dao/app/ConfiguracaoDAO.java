@@ -15,6 +15,8 @@ public class ConfiguracaoDAO extends BaseDAO<Configuracao> {
  	public Configuracao buscarPorChave(String chave) throws DaoException {
  		Session session = getSession();
  		Query query = session.getNamedQuery("Configuracao-buscarPorChave");
+ 		query.setCacheable(true);
+ 		query.setCacheRegion("Configuracao-buscarPorChave-"+chave);
  		query.setString("chave", chave);
  		Configuracao singleResult = null;
 		try {

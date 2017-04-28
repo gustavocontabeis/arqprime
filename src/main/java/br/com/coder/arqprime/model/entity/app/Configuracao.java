@@ -11,6 +11,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.com.coder.arqprime.model.entity.BaseEntity;
 
 @Entity
@@ -18,6 +21,7 @@ import br.com.coder.arqprime.model.entity.BaseEntity;
 	indexes={
 		@Index(name="INDEX_CONFIGURACAO_CHAVE", columnList = "CHAVE")
 	})
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="Configuracao")
 @NamedQueries(value={
 		@NamedQuery(name="Configuracao-buscar", 
 				query="select obj from Configuracao obj where obj.id = :id"),

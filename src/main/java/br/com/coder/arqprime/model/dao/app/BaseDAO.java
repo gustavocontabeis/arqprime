@@ -83,32 +83,37 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		}
         obj.setId(null);
     }
-
-    @SuppressWarnings({"unchecked", "hiding"})
-    public <T> T buscar(T obj, Long id) throws DaoException {
-        Session session = getSession();
-        Transaction transaction = session.beginTransaction();
-        T load = (T) session.get(obj.getClass(), id);
-        //session.flush();
-        transaction.commit();
-        session.close();
-        printStats("Buscar T id");
-        return load;
-    }
+    
+//    @Deprecated
+//    @SuppressWarnings({"unchecked", "hiding"})
+//    public <T> T buscar(T obj, Long id) throws DaoException {
+//        Session session = getSession();
+//        Transaction transaction = session.beginTransaction();
+//        T load = (T) session.get(obj.getClass(), id);
+//        //session.flush();
+//        transaction.commit();
+//        session.close();
+//        printStats("Buscar T id");
+//        return load;
+//    }
 
     public <T> T buscar(Long id) throws DaoException {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         Class<?> forName = null;
-
         try {
             Type genericSuperclass = getClass().getGenericSuperclass();
             Type t = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
             forName = Class.forName(t.getTypeName());
             Query query = session.getNamedQuery(forName.getSimpleName()+"-porId");
+            query.setCacheable(true);
+            //query.setCacheMode(cacheMode.)
+            query.setCacheRegion(forName.getSimpleName()+"-porId-"+id);
             query.setLong("id", id);
             Object uniqueResult = query.uniqueResult();
             return (T) uniqueResult;
+            
+            //return (T) session.load(forName, id);
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
