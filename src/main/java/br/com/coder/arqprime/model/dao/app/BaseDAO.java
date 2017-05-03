@@ -303,6 +303,7 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		
 		/* INNER JOIN */
 		for(Object path : filtro.getJoins()){
+			LOGGER.debug("Criando join para {}.", path.toString());
 			String[] split = path.toString().split("\\.");
 			Join join = null;
 			for (String string : split) {
@@ -315,6 +316,7 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		}
 		
 		for(Object path : filtro.getFetchs()){
+			LOGGER.debug("Criando fetch para {}.", path.toString());
 			String[] split = path.toString().split("\\.");
 			Fetch join = null;
 			for (String string : split) {
@@ -326,14 +328,14 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 			}
 		}
 		
+		/* WHERE */
 		if(filtro.getFilters()!=null){
 			
-			/* WHERE */
 			Map<String, String> map = filtro.getFilters();
 			Set<String> keySet = map.keySet();
 			for (String key : keySet) {
 				Object value = map.get(key);
-				LOGGER.debug("KEY: {} VALUE: {}", key, value);
+				LOGGER.debug("WHERE: KEY: {} VALUE: {}", key, value);
 				
 				if(value instanceof String){
 					String strValue = (String) value;
