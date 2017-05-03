@@ -11,7 +11,7 @@ public class CollectionUtil {
 		return org.apache.commons.collections.CollectionUtils.find(list, new BeanPropertyValueEqualsPredicate(property, obj));
 	}
 
-	public static Collection collect2(List list, String property, Object obj){
+	public static Collection collect(List list, String property, Object obj){
 		return org.apache.commons.collections.CollectionUtils.select(list, new BeanPropertyValueEqualsPredicate(property, obj));
 	}
 
