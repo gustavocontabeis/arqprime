@@ -438,4 +438,23 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		}
         return null;
     }
+    
+    public <T> T carregarCache() throws DaoException {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        Class<?> forName = null;
+        try {
+            Type genericSuperclass = getClass().getGenericSuperclass();
+            Type t = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+            forName = Class.forName(t.getTypeName());
+            return (T) session.createCriteria(forName).list();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }finally {
+        	transaction.commit();
+			session.close();
+		}
+        return null;
+    }
+            
 }
