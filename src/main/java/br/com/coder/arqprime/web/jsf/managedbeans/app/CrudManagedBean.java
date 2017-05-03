@@ -87,11 +87,11 @@ public abstract class CrudManagedBean <T extends BaseEntity, D extends BaseDAO<T
 				
 				dao = getDao();
 				
-				
 				Integer quantidade2 = getQuantidade2();
 				if(quantidade2 == null){
 					quantidade2 = dao.getQuantidade2(filtro);
 				}
+				
 				setRowCount(quantidade2);
 				
 				List<T> buscar2 = buscar2();

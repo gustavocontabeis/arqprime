@@ -27,8 +27,10 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import br.com.coder.arqprime.model.entity.BaseEntity;
+import br.com.coder.arqprime.model.utils.DirecaoOrdenacao;
 import br.com.coder.arqprime.model.utils.Filtro;
 import br.com.coder.arqprime.model.utils.HibernateUtil;
+import br.com.coder.arqprime.model.utils.Ordenacao;
 
 public class BaseDAOSerializable<T extends Serializable> implements Serializable {
 
@@ -111,12 +113,15 @@ public class BaseDAOSerializable<T extends Serializable> implements Serializable
         for (String property : fetchs) {
             dto.criteria.setFetchMode(property, FetchMode.JOIN);
         }
-
-        if (filtro.isAscendente() && filtro.getPropriedadeOrdenacao() != null) {
-            dto.criteria.addOrder(Order.asc(filtro.getPropriedadeOrdenacao()));
-        } else if (filtro.getPropriedadeOrdenacao() != null) {
-            dto.criteria.addOrder(Order.desc(filtro.getPropriedadeOrdenacao()));
-        }
+        
+		Ordenacao[] ordenacoes = filtro.getOrdenacoes();
+		for (Ordenacao ordenacao : ordenacoes) {
+			if(DirecaoOrdenacao.ASC == ordenacao.getDirecaoOrdenacao()){
+				dto.criteria.addOrder(Order.asc(ordenacao.getPropriedade()));
+			}else{
+				dto.criteria.addOrder(Order.desc(ordenacao.getPropriedade()));
+			}
+		}
 
         List list = dto.criteria.list();
         dto.session.close();

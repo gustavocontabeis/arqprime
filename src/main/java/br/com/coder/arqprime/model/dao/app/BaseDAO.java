@@ -1,11 +1,11 @@
 package br.com.coder.arqprime.model.dao.app;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -28,17 +29,19 @@ import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.hibernate.query.criteria.internal.path.SingularAttributeJoin;
 import org.hibernate.stat.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.coder.arqprime.model.entity.BaseEntity;
+import br.com.coder.arqprime.model.utils.DirecaoOrdenacao;
 import br.com.coder.arqprime.model.utils.Filtro;
 import br.com.coder.arqprime.model.utils.HibernateUtil;
+import br.com.coder.arqprime.model.utils.Ordenacao;
 import br.com.coder.arqprime.model.utils.StringUtil;
 
 public class BaseDAO<T extends BaseEntity> implements Serializable {
@@ -179,12 +182,12 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
         for (String property : fetchs) {
             dto.criteria.setFetchMode(property, FetchMode.JOIN);
         }
-
-        if (filtro.isAscendente() && filtro.getPropriedadeOrdenacao() != null) {
-            dto.criteria.addOrder(Order.asc(filtro.getPropriedadeOrdenacao()));
-        } else if (filtro.getPropriedadeOrdenacao() != null) {
-            dto.criteria.addOrder(Order.desc(filtro.getPropriedadeOrdenacao()));
-        }
+//			Comentei pq ja esta deprescate mesmo. Foda-se.
+//        if (filtro.isAscendente() && filtro.getPropriedadeOrdenacao() != null) {
+//            dto.criteria.addOrder(Order.asc(filtro.getPropriedadeOrdenacao()));
+//        } else if (filtro.getPropriedadeOrdenacao() != null) {
+//            dto.criteria.addOrder(Order.desc(filtro.getPropriedadeOrdenacao()));
+//        }
 
         List list = dto.criteria.list();
         dto.session.close();
@@ -284,12 +287,12 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 	}
 
 	/**
-	 * teste com criteria da JPA
 	 * @param filtro
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public CriteriaDTO criarCriteriaParaFiltro2(Filtro filtro) {
+		
 		Session session = getSession();
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		CriteriaQuery criteriaQueryClasse = builder.createQuery(filtro.getClasse());
@@ -297,63 +300,40 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 		Root from = criteriaQueryClasse.from(filtro.getClasse());
 		LOGGER.debug("Criando criteria da classe {}.", filtro.getClasse().getSimpleName());
 		List<Predicate> where = new ArrayList<Predicate>();
+		
+		/* INNER JOIN */
+		for(Object path : filtro.getJoins()){
+			String[] split = path.toString().split("\\.");
+			Join join = null;
+			for (String string : split) {
+				if(join == null){
+					join = from.join(string);
+				}else{
+					join = join.join(string); 
+				}
+			}
+		}
+		
+		for(Object path : filtro.getFetchs()){
+			String[] split = path.toString().split("\\.");
+			Fetch join = null;
+			for (String string : split) {
+				if(join == null){
+					join = from.fetch(string);
+				}else{
+					join = join.fetch(string); 
+				}
+			}
+		}
+		
 		if(filtro.getFilters()!=null){
+			
+			/* WHERE */
 			Map<String, String> map = filtro.getFilters();
-			//Set<String> paths = new HashSet<>();
-			Map<String, Object> joins = new HashMap<>();
-			
-//			if(filtro.getClasse().getSimpleName().equals("Conta")){
-//				paths.add("planoContas");
-//				paths.add("pai.planoContas");
-//				
-//				//from.fetch("planoContas");
-//				//from.fetch("pai.planoContas");
-//			}
-			
-			for(Object path : filtro.getJoins()){
-				String[] split = path.toString().split("\\.");
-				Join join = null;
-				for (String string : split) {
-					if(join == null){
-						join = from.join(string);
-					}else{
-						join = join.join(string); 
-					}
-				}
-			}
-			
-			for(Object path : filtro.getFetchs()){
-				String[] split = path.toString().split("\\.");
-				Fetch join = null;
-				for (String string : split) {
-					if(join == null){
-						join = from.fetch(string);
-					}else{
-						join = join.fetch(string); 
-					}
-				}
-			}
-			
-			//Montar aqui algo que crie um map com joins
-//			Join join = null;
-//			if(joins.containsKey(key)){
-//				join = (Join) joins.get(key);
-//			}else{
-//				join = from.join(key);
-//				joins.put(key, join);
-//			}
-//			if(value == null){
-//				continue;
-//			}
-
-			
-			
 			Set<String> keySet = map.keySet();
 			for (String key : keySet) {
 				Object value = map.get(key);
 				LOGGER.debug("KEY: {} VALUE: {}", key, value);
-				
-				//filtro.getClass().getField(key)
 				
 				if(value instanceof String){
 					String strValue = (String) value;
@@ -379,60 +359,62 @@ public class BaseDAO<T extends BaseEntity> implements Serializable {
 					}
 				}
 			}
+			
 			CriteriaQuery select = criteriaQueryClasse.select(from);
 			select.where(where.toArray(new Predicate[where.size()]));
 		}
 		
-		if(!StringUtil.isBlank(filtro.getPropriedadeOrdenacao())){
+		/* ORDER BY */
+		if(filtro.getOrdenacoes().length > 0){
 			List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
-			if(filtro.getPropriedadeOrdenacao().contains(",")){
-				String[] split = filtro.getPropriedadeOrdenacao().split(",");
-				for (String string : split) {
-					String[] split2 = string.trim().split(" ");
-					String property = split2[0].trim();
-					if(split2.length==2){
-						if("desc".equals(split2[1].trim().toLowerCase())){
-							orderList.add(builder.desc(from.get(property)));
-						}else{
-							orderList.add(builder.asc(from.get(property)));
+			Ordenacao[] ordenacoes = filtro.getOrdenacoes();
+			for (Ordenacao ordenacao : ordenacoes) {
+				
+				if(ordenacao.getPropriedade().contains(".")){
+					
+					String[] split = ordenacao.getPropriedade().split("\\.");
+					
+					Set fetches = from.getFetches();
+					for (Object object : fetches) {
+						if(object instanceof SingularAttributeJoin){
+							SingularAttributeJoin attributeJoin = (SingularAttributeJoin) object;
+							System.out.println(attributeJoin.getAttribute().getName());
+							if(split[0].equals(attributeJoin.getAttribute().getName())){
+								if(object instanceof Join){
+									Join join = (Join) object;
+									if(DirecaoOrdenacao.ASC == ordenacao.getDirecaoOrdenacao()){
+										orderList.add(builder.asc(join.get(split[1])));
+									}else{
+										orderList.add(builder.desc(join.get(split[1])));
+									}
+								}else if(object instanceof Fetch){//??? nao vai passar aqui...
+									Fetch fetch = (Fetch) object;
+									Join join = (Join) object;
+									orderList.add(builder.asc(join.get(split[1])));
+								}							
+							}
 						}
+					}
+					
+				}else{
+					if(DirecaoOrdenacao.ASC == ordenacao.getDirecaoOrdenacao()){
+						orderList.add(builder.asc(from.get(ordenacao.getPropriedade())));
 					}else{
-						orderList.add(builder.asc(from.get(property)));
+						orderList.add(builder.desc(from.get(ordenacao.getPropriedade())));
 					}
 				}
-			}else{
-				if(filtro.isAscendente()){
-					orderList.add(builder.asc(from.get(filtro.getPropriedadeOrdenacao())));
-				}else{
-					orderList.add(builder.desc(from.get(filtro.getPropriedadeOrdenacao())));
-				}
+				
 			}
 			criteriaQueryClasse.orderBy(orderList);
 		}
 		
-//		//count
-//		CriteriaQuery<Long> cq = builder.createQuery(Long.class);
-//		cq.select(builder.count(cq.from(filtro.getClasse())));
-//		Long singleResult = session.createQuery(cq).getSingleResult();
-//		System.out.println(singleResult);
-//		
-//		//select
-//		Query createQuery = session.createQuery(criteriaQueryClasse);
-//		createQuery.setFirstResult(filtro.getPrimeiroRegistro());
-//		createQuery.setMaxResults(filtro.getQuantRegistros());
-//		
-//		List resultList = createQuery.getResultList();
-//		for (Object object : resultList) {
-//			System.out.println(object);
-//		}
-		
-		CriteriaDTO c = new CriteriaDTO();
-		c.criteriaQueryClass = criteriaQueryClasse;
-		c.criteriaQueryId = criteriaQueryId;
-		c.builder = builder;
-		c.session = session;
-		c.from = from;
-		return c;
+		CriteriaDTO criteriaDTO = new CriteriaDTO();
+		criteriaDTO.criteriaQueryClass = criteriaQueryClasse;
+		criteriaDTO.criteriaQueryId = criteriaQueryId;
+		criteriaDTO.builder = builder;
+		criteriaDTO.session = session;
+		criteriaDTO.from = from;
+		return criteriaDTO;
 	}
 
     public <T> T list() throws DaoException {
