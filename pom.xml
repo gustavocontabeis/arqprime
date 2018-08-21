@@ -18,13 +18,15 @@
 			<scope>test</scope>
 			<type>jar</type>
 		</dependency>
-
+		
+		<!-- 
 		<dependency>
 			<groupId>br.com.coder</groupId>
 			<artifactId>GeradorCodigo</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+		 -->
 		
 		<dependency>
 			<groupId>javax</groupId>

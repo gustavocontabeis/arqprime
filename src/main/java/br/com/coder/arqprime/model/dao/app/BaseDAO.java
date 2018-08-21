@@ -1,6 +1,6 @@
 package br.com.coder.arqprime.model.dao.app;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+//import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
